@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音樂測驗</title>
+  <script>
+    let audioFiles = ['咖啡色', '橙色', '灰色', '白色', '粉紅仔色', '紅色', '紫色', '膚色', '藍色', '青色', '黃色', '黑色'];
+    let score = 0;
+    let timeLeft = 60;
+    let timer;
+
+    function playRandomAudio() {
+      // 隨機選取音檔播放
+      let randomIndex = Math.floor(Math.random() * audioFiles.length);
+      let audio = new Audio(audioFiles[randomIndex] + '.mp3');
+      audio.play();
+       
+      // 顯示選項
+      let correctAnswer = audioFiles[randomIndex];
+      let otherOptions = audioFiles.filter(item => item !== correctAnswer);
+      otherOptions = shuffleArray(otherOptions);
+       
+      let optionsHtml = '';
+      for (let i = 0; i < 4; i++) {
+        if (i === 0) {
+          optionsHtml += `<button onclick="checkAnswer(true)">${correctAnswer}</button><br>`;
+        } else {
+          optionsHtml += `<button onclick="checkAnswer(false)">${otherOptions[i - 1]}</button><br>`;
+        }
+      }
+      document.getElementById('options').innerHTML = optionsHtml;
+    }
+     
+    function checkAnswer(isCorrect) {
+      if (isCorrect) {
+        score++;
+      } else {
+        score--;
+        document.body.style.backgroundColor = 'red';
+        setTimeout(() => {
+          document.body.style.backgroundColor = 'white';
+        }, 1000);
+      }
+      document.getElementById('score').innerText = 'Score: ' + score;
+      playRandomAudio();
+    }
+     
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startGame() {
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          alert('遊戲結束！您的分數是: ' + score);
+        }
+      }, 1000);
+
+      playRandomAudio();
+    }
+  </script>
+</head>
+<body>
+  <h1>音樂測驗</h1>
+  <button onclick="startGame()">開始遊戲</button><br><br>
+  <div id="options"></div>
+  <div id="score">Score: 0</div>
+  <div id="time">Time Left: 60</div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音頻選擇遊戲</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 1s;
+        }
+        .options {
+            margin-top: 20px;
+        }
+        .option {
+            cursor: pointer;
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .option:hover {
+            background-color: #e0e0e0;
+        }
+        .score, .timer {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .game-over {
+            display: none;
+            font-size: 24px;
+            margin-top: 20px;
+            color: red;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>選擇正確的音頻檔案名稱</h1>
+    <audio id="audioPlayer" controls></audio>
+    <div class="options" id="optionsContainer"></div>
+    <div class="score">分數: <span id="score">0</span></div>
+    <div class="timer">時間: <span id="timer">60</span> 秒</div>
+    <div class="game-over" id="gameOverMessage">
+        遊戲結束！最終分數: <span id="finalScore"></span>
+        <br>
+        <button class="button" onclick="startNewGame()">重新開始遊戲</button>
+    </div>
+
+    <script>
+        const audioFiles = [
+            "咖啡色", "橙色", "灰色", "白色", "紅仔色",
+            "紅色", "紫色", "膚色", "藍色", "青色",
+            "黃色", "黑色"
+        ];
+        
+        let score = 0;
+        let timer = 60;
+        let timerInterval;
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function loadNewAudio() {
+            const correctFileName = getRandomElement(audioFiles);
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = correctFileName + '.mp3';
+            audioPlayer.play();
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const options = [correctFileName];
+            while (options.length < 4) {
+                const randomOption = getRandomElement(audioFiles);
+                if (!options.includes(randomOption)) {
+                    options.push(randomOption);
+                }
+            }
+
+            options.sort(() => Math.random() - 0.5);
+            
+            options.forEach(option => {
+                const button = document.createElement('div');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = function() {
+                    if (option === correctFileName) {
+                        score++;
+                        document.getElementById('score').textContent = score;
+                        loadNewAudio();
+                    } else {
+                        document.body.style.backgroundColor = 'red';
+                        setTimeout(() => {
+                            document.body.style.backgroundColor = 'white';
+                            loadNewAudio();
+                        }, 1000);
+                        score--;
+                        document.getElementById('score').textContent = score;
+                    }
+                };
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function startTimer() {
+            const timerElement = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                timer--;
+                timerElement.textContent = timer;
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            document.getElementById('audioPlayer').pause();
+            document.getElementById('optionsContainer').innerHTML = '';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('gameOverMessage').style.display = 'block';
+            document.getElementById('finalScore').textContent = score;
+        }
+
+        function startNewGame() {
+            score = 0;
+            timer = 60;
+            document.getElementById('score').textContent = score;
+            document.getElementById('timer').textContent = timer;
+            document.getElementById('gameOverMessage').style.display = 'none';
+            document.getElementById('timer').style.display = 'block';
+            loadNewAudio();
+            startTimer();
+        }
+
+        window.onload = function() {
+            startNewGame();
+        };
+    </script>
+</body>
+</html>
