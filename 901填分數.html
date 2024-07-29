@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表格輸入小鍵盤</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        .keypad {
+            display: none;
+            position: absolute;
+            background: #fff;
+            border: 1px solid #000;
+            z-index: 1000;
+            padding: 10px;
+        }
+        .keypad button {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        .date-picker, .subject-picker {
+            margin-bottom: 20px;
+        }
+        .active {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+
+<div class="date-picker">
+    <label for="exam-date">考試日期：</label>
+    <input type="date" id="exam-date">
+</div>
+
+<div class="subject-picker">
+    <label for="subject">科目：</label>
+    <select id="subject" onchange="checkOther()">
+        <option value="國文">國文</option>
+        <option value="英文">英文</option>
+        <option value="數學">數學</option>
+        <option value="社會">社會</option>
+        <option value="自然">自然</option>
+        <option value="歷史">歷史</option>
+        <option value="地理">地理</option>
+        <option value="公民">公民</option>
+        <option value="理化">理化</option>
+        <option value="生物">生物</option>
+        <option value="其他">其他</option>
+    </select>
+    <input type="text" id="other-subject" style="display:none;" placeholder="請輸入科目名稱">
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>座號</th>
+            <th>分數</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>01吳O瑄</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>02呂O潔</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>03周O妡</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>04邱O庭</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>05侯O靖</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>06侯O瀅</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>07高O萱</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>08張O瑄</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>10郭O捷</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>11陳O晴</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>12陳O如</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>13黃O甯</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>14鍾O菫</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>21王O澔</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>22王O翰</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>24李O承</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>25李O謙</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>26李O樂</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>27李O溥</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>28林O又</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>29林O丞</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>30陳O之</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>31陳O安</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>32陳O佑</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>33彭O恩</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>34楊O惟</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>35廖O博</td>
+            <td class="score-cell"></td>
+        </tr>
+        <tr>
+            <td>36蔡O淳</td>
+            <td class="score-cell"></td>
+        </tr>
+    </tbody>
+</table>
+
+<div id="keypad" class="keypad">
+    <div>
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+    </div>
+    <div>
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+    </div>
+    <div>
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+    </div>
+    <div>
+        <button>0</button>
+        <button>.</button>
+    </div>
+    <div>
+        <button id="keypad-clear">清除</button>
+        <button id="keypad-backspace">刪除</button>
+        <button id="keypad-close">關閉</button>
+    </div>
+</div>
+
+<button id="submit">提交</button>
+
+<script>
+    function checkOther() {
+        const subjectSelect = document.getElementById('subject');
+        const otherInput = document.getElementById('other-subject');
+        if (subjectSelect.value === '其他') {
+            otherInput.style.display = 'inline-block';
+        } else {
+            otherInput.style.display = 'none';
+        }
+    }
+
+    document.querySelectorAll('.score-cell').forEach(cell => {
+        cell.addEventListener('click', showKeypad);
+    });
+
+    function showKeypad(event) {
+        const keypad = document.getElementById('keypad');
+        keypad.style.display = 'block';
+        const rect = event.target.getBoundingClientRect();
+        keypad.style.top = (rect.bottom + window.scrollY) + 'px';
+        keypad.style.left = (rect.left + window.scrollX) + 'px';
+        
+        document.querySelectorAll('.score-cell').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        keypad.dataset.activeCell = event.target;
+    }
+
+    document.getElementById('keypad').addEventListener('click', function(event) {
+        const target = event.target;
+        const activeCell = document.querySelector('.score-cell.active');
+        if (target.tagName === 'BUTTON' && !target.id.includes('keypad-')) {
+            if (activeCell) {
+                activeCell.textContent += target.textContent;
+            }
+        } else if (target.id === 'keypad-clear') {
+            if (activeCell) {
+                activeCell.textContent = '';
+            }
+        } else if (target.id === 'keypad-backspace') {
+            if (activeCell) {
+                activeCell.textContent = activeCell.textContent.slice(0, -1);
+            }
+        } else if (target.id === 'keypad-close') {
+            document.getElementById('keypad').style.display = 'none';
+        }
+    });
+
+    document.addEventListener('click', function(event) {
+        const keypad = document.getElementById('keypad');
+        if (!keypad.contains(event.target) && !event.target.classList.contains('score-cell')) {
+            keypad.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        const activeCell = document.querySelector('.score-cell.active');
+        if (activeCell && /^[0-9.]$/.test(event.key)) {
+            activeCell.textContent += event.key;
+        } else if (activeCell && event.key === 'Backspace') {
+            activeCell.textContent = activeCell.textContent.slice(0, -1);
+        } else if (activeCell && event.key === 'Escape') {
+            document.getElementById('keypad').style.display = 'none';
+        }
+    });
+
+    document.getElementById('submit').addEventListener('click', function() {
+        // 提交邏輯，將數據傳輸到 Google Sheet
+        alert('提交功能尚未實現');
+    });
+</script>
+
+</body>
+</html>
