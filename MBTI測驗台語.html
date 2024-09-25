@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI測驗</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .question {
+            margin: 20px 0;
+        }
+        .question button {
+            margin: 5px;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+        }
+        .question button.selected {
+            background-color: #4caf50;
+            color: white;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #submitBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #008cba;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>MBTI測驗</h1>
+<h3>測前須知<br>
+
+-這个問卷是咧開破你按怎看事物、按怎做決定，答案無好䆀。<br> 
+
+-問卷結果幫助了解家己的職業傾向、個性特徵、人佮人鬥陣的特徵。<br> 
+
+-參加測試的人員請一定愛誠實、獨立回答問題，干焦按呢，才會得著有效的結果。<br> 
+
+-請斟酌閱讀每一个問題，答案直接寫佇題目頂懸。<br> 
+
+-免對問題想的傷濟，根據第一感覺回答就會使。<br>
+
+-所有題目無對毋著之分，請依照家己的實際狀況選擇。<br>
+
+-只要你是認真、真實填寫測試問卷，會當得著一个佮你的性格四配的類型。希望你會當濟少得著一寡有幫助的資訊。<br></h3>
+<div id="questions">
+    <div class="question" data-question-number="1">
+        1. 你較佮意：
+        <button onclick="selectAnswer(1, 'E', this)">A. 佮人交流</button>
+        <button onclick="selectAnswer(1, 'I', this)">B. 家己思考</button>
+    </div>
+    <div class="question" data-question-number="2">
+        2. 你較注重：
+        <button onclick="selectAnswer(2, 'S', this)">A. 具體事實</button>
+        <button onclick="selectAnswer(2, 'N', this)">B. 抽象理論</button>
+    </div>
+    <div class="question" data-question-number="3">
+        3. 你做決定時較靠勢：
+        <button onclick="selectAnswer(3, 'T', this)">A. 邏輯分析</button>
+        <button onclick="selectAnswer(3, 'F', this)">B. 感受佮價值觀</button>
+    </div>
+    <div class="question" data-question-number="4">
+        4. 你較佮意：
+        <button onclick="selectAnswer(4, 'J', this)">A. 有計畫的生活</button>
+        <button onclick="selectAnswer(4, 'P', this)">B. 凊彩的生活</button>
+    </div>
+    <div class="question" data-question-number="5">
+        5. 佇社交場合當中，你定定：
+        <button onclick="selectAnswer(5, 'E', this)">A. 主動佮別人交流</button>
+        <button onclick="selectAnswer(5, 'I', this)">B. 保持恬恬，觀察周圍</button>
+    </div>
+    <div class="question" data-question-number="6">
+        6. 你通常較依靠：
+        <button onclick="selectAnswer(6, 'S', this)">A. 具體的經驗佮資料</button>
+        <button onclick="selectAnswer(6, 'N', this)">B. 直覺佮未來的可能性</button>
+    </div>
+    <div class="question" data-question-number="7">
+        7. 你較看重：
+        <button onclick="selectAnswer(7, 'T', this)">A. 公平佮事實</button>
+        <button onclick="selectAnswer(7, 'F', this)">B. 同情佮佮諧</button>
+    </div>
+    <div class="question" data-question-number="8">
+        8. 咧處理日常任務時，你通常：
+        <button onclick="selectAnswer(8, 'J', this)">A. 有計劃進行</button>
+        <button onclick="selectAnswer(8, 'P', this)">B. 根據心情即興應對</button>
+    </div>
+    <div class="question" data-question-number="9">
+        9. 你較偏好：
+        <button onclick="selectAnswer(9, 'E', this)">A. 佮一陣人做伙工課</button>
+        <button onclick="selectAnswer(9, 'I', this)">B. 獨立完成任務</button>
+    </div>
+    <div class="question" data-question-number="10">
+        10. 當當面對複雜的問題時，你通常：
+        <button onclick="selectAnswer(10, 'S', this)">A. 搜揣具體的解決方案</button>
+        <button onclick="selectAnswer(10, 'N', this)">B. 探索濟種可能性</button>
+    </div>
+    <div class="question" data-question-number="11">
+        11. 你處理衝突時較倚向佇：
+        <button onclick="selectAnswer(11, 'T', this)">A. 公正佮事實</button>
+        <button onclick="selectAnswer(11, 'F', this)">B. 考慮對方的情感</button>
+    </div>
+    <div class="question" data-question-number="12">
+        12. 若有新計畫時，你通常：
+        <button onclick="selectAnswer(12, 'J', this)">A. 連鞭開始規劃</button>
+        <button onclick="selectAnswer(12, 'P', this)">B. 根據狀況應對</button>
+    </div>
+    <div class="question" data-question-number="13">
+        13. 你參加聚會的時：
+        <button onclick="selectAnswer(13, 'E', this)">A. 佮意佮濟人互動</button>
+        <button onclick="selectAnswer(13, 'I', this)">B. 較愛佮少數的人抑是獨處</button>
+    </div>
+    <div class="question" data-question-number="14">
+        14. 你較信賴：
+        <button onclick="selectAnswer(14, 'S', this)">A. 你所見佮經歷的事實</button>
+        <button onclick="selectAnswer(14, 'N', this)">B. 你的直覺佮靈感</button>
+    </div>
+    <div class="question" data-question-number="15">
+        15. 你處理問題時較倚向佇：
+        <button onclick="selectAnswer(15, 'T', this)">A. 斟酌細膩分析每一个細節</button>
+        <button onclick="selectAnswer(15, 'F', this)">B. 考慮整體影響佮情感</button>
+    </div>
+    <div class="question" data-question-number="16">
+        16. 當當你面對緊急狀況的時：
+        <button onclick="selectAnswer(16, 'J', this)">A. 根據既定計畫行動</button>
+        <button onclick="selectAnswer(16, 'P', this)">B. 隨機應變</button>
+    </div>
+    <div class="question" data-question-number="17">
+        17. 你佇做決定的時：
+        <button onclick="selectAnswer(17, 'E', this)">A. 較願意佮別人討論</button>
+        <button onclick="selectAnswer(17, 'I', this)">B. 偏向獨立思考</button>
+    </div>
+    <div class="question" data-question-number="18">
+        18. 你感覺較趣味的是：
+        <button onclick="selectAnswer(18, 'S', this)">A. 探索現實中的具體事物</button>
+        <button onclick="selectAnswer(18, 'N', this)">B. 研究潛在的可能性</button>
+    </div>
+    <div class="question" data-question-number="19">
+        19. 當當你佮別人發生意見無仝的時：
+        <button onclick="selectAnswer(19, 'T', this)">A. 通過理性討論解決</button>
+        <button onclick="selectAnswer(19, 'F', this)">B. 顧及雙方的感受</button>
+    </div>
+    <div class="question" data-question-number="20">
+        20. 你佮意：
+        <button onclick="selectAnswer(20, 'J', this)">A. 有計畫的生活</button>
+        <button onclick="selectAnswer(20, 'P', this)">B. 隨性的生活</button>
+    </div>
+</div>
+
+<button id="submitBtn" onclick="showResult()">送出測驗</button>
+
+<div class="result" id="result"></div>
+<div class="analysis" id="analysis"></div>
+
+<script>
+    let scores = { 'E': 0, 'I': 0, 'S': 0, 'N': 0, 'T': 0, 'F': 0, 'J': 0, 'P': 0 };
+    let selectedAnswers = {};
+
+    const mbtiAnalysis = {
+        'ISTJ': 'ISTJ（物流師） - 非常務實、值得信賴，能在堅守傳統佮規則之下，來維護事情發展的穩定度。',
+        'ISTP': 'ISTP（巧匠） - 善於分析問題癥結，對細節瞭若指掌，靠著靈巧的雙手解決各種疑難雜症，是優秀的工匠。',
+        'ISFJ': 'ISFJ（守護者） - 可靠、喜歡照顧他人，高度關注細節，會傾盡全力去保護自己所愛的人事物。',
+        'ISFP': 'ISFP（冒險家） - 腦筋靈活、對探索新事物充滿熱情，享受著體驗佮實踐的過程，很能包容跟自己不同的價值觀。',
+        'INTJ': 'INTJ（建築師） - 富有想像力，並提出目標清晰的思考，以合乎邏輯的步驟達成目標，對每件事都有明確的計畫跟策略。',
+        'INTP': 'INTP（邏輯學家） - 本於理論、積極創新，對知識有著無止境的渴望，喜歡理論佮抽象思考，並在其中努力找出創新的可能。',
+        'INFJ': 'INFJ（倡議家） - 富有洞察力、同情心，想為他人創造較美好的未來願景，帶有理想主義色彩及很高的道德標準。',
+        'INFP': 'INFP（調停者） - 善良、富有詩意的利他主義者，對理想有著強烈的價值信念，熱衷於付出自己、成就大局。',
+        'ESTJ': 'ESTJ（行政官） - 擅長管理事務，組織結構能力強，信奉傳統佮規章，對群體事務有責任心，對自己也有高要求。',
+        'ESTP': 'ESTP（企業家） - 行動力十足，而且心臟大顆、很能承擔風險，具有洞察事物的天賦，做事不拖泥帶水，擅長解決難題。',
+        'ESFJ': 'ESFJ（執政家） - 尊重秩序佮規則，喜歡交際，並發揮己力去幫助別人，致力於建設出佮諧、有條有理的環境跟組織。',
+        'ESFP': 'ESFP（演員） - 自發、有活力且熱情，常常是人群中目光的焦點，善於佮他人建立連結，享受生活的每一刻。',
+        'ENFJ': 'ENFJ（精神領袖） - 富有魅力、具有鼓舞人心的能力，能感動人，是很有同理心的領袖，懂得理解佮關懷他人需求，幫助他人實現潛力。',
+        'ENFP': 'ENFP（運動家） - 樂觀、富有熱情、愛好自由，善於交際且笑口常開，對人佮人之間的關係有著深厚的理解佮關懷，會去支援新的可能性發生。',
+        'ENTJ': 'ENTJ（指揮官） - 果決、意志力堅定，做事情注重效率，擅長分析客觀的事物，並制定清晰方向，引導大家去實現。',
+        'ENTP': 'ENTP（辯論家） - 好奇心旺盛、喜歡鬥智，創意十足且熱衷挑戰，具有開創性思維，善於透過思考來找出新的可能性。'
+    };
+
+    function selectAnswer(questionNumber, trait, buttonElement) {
+        selectedAnswers[questionNumber] = trait;
+
+        const buttons = buttonElement.parentElement.querySelectorAll('button');
+        buttons.forEach(button => button.classList.remove('selected'));
+        buttonElement.classList.add('selected');
+    }
+
+    function showResult() {
+        Object.keys(selectedAnswers).forEach(questionNumber => {
+            const trait = selectedAnswers[questionNumber];
+            scores[trait]++;
+        });
+
+        const mbti = `${scores['E'] >= scores['I'] ? 'E' : 'I'}${scores['S'] >= scores['N'] ? 'S' : 'N'}${scores['T'] >= scores['F'] ? 'T' : 'F'}${scores['J'] >= scores['P'] ? 'J' : 'P'}`;
+
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = `你的MBTI人格類型是：${mbti}`;
+
+        const analysisDiv = document.getElementById("analysis");
+        analysisDiv.innerHTML = mbtiAnalysis[mbti] || '未知的類型';
+    }
+</script>
+
+</body>
+</html>
