@@ -9,8 +9,11 @@
     let score = 0;
     let timeLeft = 60;
     let timer;
+    let gameActive = false; // 新增變量追踪遊戲狀態
 
     function playRandomAudio() {
+      if (!gameActive) return; // 如果遊戲結束，停止生成新選項
+
       // 隨機選取音檔播放
       let randomIndex = Math.floor(Math.random() * audioFiles.length);
       let audio = new Audio(audioFiles[randomIndex] + '.mp3');
@@ -33,6 +36,8 @@
     }
      
     function checkAnswer(isCorrect) {
+      if (!gameActive) return; // 如果遊戲結束，停止檢查答案
+
       if (isCorrect === 'true') {
         score++;
       } else {
@@ -55,16 +60,28 @@
     }
 
     function startGame() {
+      gameActive = true; // 遊戲開始
+      score = 0; // 初始化分數
+      timeLeft = 60; // 初始化時間
+      document.getElementById('score').innerText = 'Score: ' + score;
+      document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
+
       timer = setInterval(() => {
         timeLeft--;
         document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
         if (timeLeft === 0) {
-          clearInterval(timer);
-          alert('遊戲結束！您的分數是: ' + score);
+          endGame(); // 當時間結束時，停止遊戲
         }
       }, 1000);
 
       playRandomAudio();
+    }
+
+    function endGame() {
+      gameActive = false; // 停止遊戲
+      clearInterval(timer); // 停止計時
+      alert('遊戲結束！您的分數是: ' + score);
+      document.getElementById('options').innerHTML = ''; // 清空選項
     }
   </script>
 </head>
