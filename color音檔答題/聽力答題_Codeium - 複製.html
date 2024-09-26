@@ -20,20 +20,20 @@
       let correctAnswer = audioFiles[randomIndex];
       let otherOptions = audioFiles.filter(item => item !== correctAnswer);
       otherOptions = shuffleArray(otherOptions);
-       
+      
+      // 將正確答案與其他選項合併並隨機排列
+      let allOptions = [correctAnswer, ...otherOptions.slice(0, 3)];
+      allOptions = shuffleArray(allOptions);  // 隨機化選項
+
       let optionsHtml = '';
-      for (let i = 0; i < 4; i++) {
-        if (i === 0) {
-          optionsHtml += `<button onclick="checkAnswer(true)">${correctAnswer}</button><br>`;
-        } else {
-          optionsHtml += `<button onclick="checkAnswer(false)">${otherOptions[i - 1]}</button><br>`;
-        }
+      for (let i = 0; i < allOptions.length; i++) {
+        optionsHtml += `<button onclick="checkAnswer('${allOptions[i] === correctAnswer}')">${allOptions[i]}</button><br>`;
       }
       document.getElementById('options').innerHTML = optionsHtml;
     }
      
     function checkAnswer(isCorrect) {
-      if (isCorrect) {
+      if (isCorrect === 'true') {
         score++;
       } else {
         score--;
