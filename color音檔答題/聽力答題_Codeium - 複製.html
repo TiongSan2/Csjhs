@@ -4,6 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>色水測驗</title>
+  <style>
+    /* 調整按鈕的樣式 */
+    button {
+      font-size: 24px;   /* 調整字體大小 */
+      padding: 20px;     /* 增加內邊距，讓按鈕變大 */
+      width: 100%;       /* 讓按鈕適應網格 */
+      height: 100px;     /* 設置按鈕的高度 */
+    }
+
+    /* 創建一個 2x2 的網格 */
+    #options {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 兩列 */
+      grid-gap: 10px; /* 增加按鈕間的間距 */
+      width: 400px;   /* 設定網格的總寬度 */
+      margin: 20px auto; /* 將網格置中 */
+    }
+
+    /* 調整整體版面樣式 */
+    body {
+      text-align: center; /* 讓內容置中 */
+    }
+  </style>
   <script>
     let audioFiles = ['咖啡色', '橙色', '灰色', '白色', '粉紅仔色', '紅色', '紫色', '膚色', '藍色', '青色', '黃色', '黑色'];
     let score = 0;
@@ -30,7 +53,7 @@
 
       let optionsHtml = '';
       for (let i = 0; i < allOptions.length; i++) {
-        optionsHtml += `<button onclick="checkAnswer('${allOptions[i] === correctAnswer}')">${allOptions[i]}</button><br>`;
+        optionsHtml += `<button onclick="checkAnswer('${allOptions[i] === correctAnswer}')">${allOptions[i]}</button>`;
       }
       document.getElementById('options').innerHTML = optionsHtml;
     }
@@ -87,9 +110,9 @@
 </head>
 <body>
   <h1>色水測驗</h1>
-  <button onclick="startGame()">開始遊戲</button><br><br>
+  <button onclick="startGame()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
   <div id="options"></div>
-  <div id="score">分數: 0</div>
-  <div id="time">Time Left: 60</div>
+  <div id="score" style="font-size: 24px;">Score: 0</div>
+  <div id="time" style="font-size: 24px;">Time Left: 60</div>
 </body>
 </html>
