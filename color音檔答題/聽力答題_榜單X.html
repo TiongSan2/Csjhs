@@ -83,7 +83,7 @@
     let classList = {};  // 全局變量，保存班級和學生名
 
     window.onload = function() {
-      fetch('/mnt/data/students.csv')  // 正確指定 CSV 文件的路徑
+      fetch('/students.csv')  // 正確指定 CSV 文件的路徑
         .then(response => response.text())
         .then(csvData => parseCSV(csvData));
 
