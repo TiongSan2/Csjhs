@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>學生名單</title>
+</head>
+<body>
+
+  <h1>選擇班級與學生</h1>
+  <label for="classSelect">選擇班級：</label>
+  <select id="classSelect">
+    <option value="">請選擇班級</option>
+  </select>
+
+  <br><br>
+
+  <label for="studentSelect">選擇學生：</label>
+  <select id="studentSelect">
+    <option value="">請先選擇班級</option>
+  </select>
+
+  <br><br>
+
+  <script>
+    // 讀取CSV文件並解析
+    fetch('students.csv') // 使用相對路徑讀取同資料夾下的CSV文件
+      .then(response => response.text())
+      .then(text => {
+        const lines = text.split('\n');  // 分割每一行
+        const studentsByClass = {};
+
+        // 解析每一行並將學生名單按班級分類
+        lines.forEach(line => {
+          const [className, student] = line.split(',');  // 分割逗號
+          if (className && student) {
+            if (!studentsByClass[className]) {
+              studentsByClass[className] = [];
+            }
+            studentsByClass[className].push(student.trim());
+          }
+        });
+
+        // 將班級填入班級下拉選單
+        const classSelect = document.getElementById('classSelect');
+        for (const className in studentsByClass) {
+          const option = document.createElement('option');
+          option.value = className;
+          option.text = `${className} 班`;
+          classSelect.appendChild(option);
+        }
+
+        // 當選擇班級時，顯示對應的學生名單
+        classSelect.addEventListener('change', function () {
+          const selectedClass = classSelect.value;
+          const studentSelect = document.getElementById('studentSelect');
+          studentSelect.innerHTML = '';  // 清空之前的學生選項
+
+          if (studentsByClass[selectedClass]) {
+            studentsByClass[selectedClass].forEach(student => {
+              const option = document.createElement('option');
+              option.value = student;
+              option.text = student;
+              studentSelect.appendChild(option);
+            });
+          } else {
+            const option = document.createElement('option');
+            option.value = '';
+            option.text = '請先選擇班級';
+            studentSelect.appendChild(option);
+          }
+        });
+      })
+      .catch(error => console.error('錯誤:', error));
+  </script>
+
+</body>
+</html>
