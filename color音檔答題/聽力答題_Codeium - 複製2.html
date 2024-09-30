@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>色水測驗</title>
+  <style>
+    /* 調整按鈕的樣式 */
+    button {
+      font-size: 24px;   /* 調整字體大小 */
+      padding: 20px;     /* 增加內邊距，讓按鈕變大 */
+      width: 100%;       /* 讓按鈕適應網格 */
+      height: 100px;     /* 設置按鈕的高度 */
+    }
+
+    /* 創建一個 2x2 的網格 */
+    #options {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 兩列 */
+      grid-gap: 10px; /* 增加按鈕間的間距 */
+      width: 400px;   /* 設定網格的總寬度 */
+      margin: 20px auto; /* 將網格置中 */
+    }
+
+    /* 調整整體版面樣式 */
+    body {
+      text-align: center; /* 讓內容置中 */
+    }
+  </style>
+  <script>
+    let audioFiles = ['咖啡色', '橙色', '灰色', '白色', '粉紅仔色', '紅色', '紫色', '膚色', '藍色', '青色', '黃色', '黑色'];
+    let score = 0;
+    let timeLeft = 60;
+    let timer;
+    let gameActive = false; // 新增變量追踪遊戲狀態
+
+    function playRandomAudio() {
+      if (!gameActive) return; // 如果遊戲結束，停止生成新選項
+
+      // 隨機選取音檔播放
+      let randomIndex = Math.floor(Math.random() * audioFiles.length);
+      let audio = new Audio(audioFiles[randomIndex] + '.mp3');
+      audio.play();
+       
+      // 顯示選項
+      let correctAnswer = audioFiles[randomIndex];
+      let otherOptions = audioFiles.filter(item => item !== correctAnswer);
+      otherOptions = shuffleArray(otherOptions);
+      
+      // 將正確答案與其他選項合併並隨機排列
+      let allOptions = [correctAnswer, ...otherOptions.slice(0, 3)];
+      allOptions = shuffleArray(allOptions);  // 隨機化選項
+
+      let optionsHtml = '';
+      for (let i = 0; i < allOptions.length; i++) {
+        optionsHtml += `<button onclick="checkAnswer('${allOptions[i] === correctAnswer}')">${allOptions[i]}</button>`;
+      }
+      document.getElementById('options').innerHTML = optionsHtml;
+    }
+     
+    function checkAnswer(isCorrect) {
+      if (!gameActive) return; // 如果遊戲結束，停止檢查答案
+
+      if (isCorrect === 'true') {
+        score++;
+      } else {
+        score--;
+        document.body.style.backgroundColor = 'red';
+        setTimeout(() => {
+          document.body.style.backgroundColor = 'white';
+        }, 1000);
+      }
+      document.getElementById('score').innerText = 'Score: ' + score;
+      playRandomAudio();
+    }
+     
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startGame() {
+      gameActive = true; // 遊戲開始
+      score = 0; // 初始化分數
+      timeLeft = 60; // 初始化時間
+      document.getElementById('score').innerText = 'Score: ' + score;
+      document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
+
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
+        if (timeLeft === 0) {
+          endGame(); // 當時間結束時，停止遊戲
+        }
+      }, 1000);
+
+      playRandomAudio();
+    }
+
+    function endGame() {
+      gameActive = false; // 停止遊戲
+      clearInterval(timer); // 停止計時
+      alert('遊戲結束！您的分數是: ' + score);
+      document.getElementById('options').innerHTML = ''; // 清空選項
+    }
+  </script>
+</head>
+<body>
+  <h1>色水測驗</h1>
+  <button onclick="startGame()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
+  <div id="options"></div>
+  <div id="score" style="font-size: 24px;">Score: 0</div>
+  <div id="time" style="font-size: 24px;">Time Left: 60</div>
+</body>
+</html>
