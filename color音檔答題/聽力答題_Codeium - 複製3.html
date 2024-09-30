@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>色水測驗</title>
   <style>
-    /* 按鈕樣式及版面設定 */
     button {
       font-size: 24px;
       padding: 20px;
@@ -21,15 +20,35 @@
     }
     body {
       text-align: center;
+      display: flex;
+    }
+    #gameArea {
+      flex: 1;
+    }
+    #leaderboard {
+      width: 300px;
+      padding: 20px;
+      background-color: #f4f4f4;
+      border-left: 2px solid #ccc;
+    }
+    .highlight {
+      background-color: red;
     }
   </style>
 </head>
 <body>
-  <h1>色水測驗</h1>
-  <button onclick="startGame()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
-  <div id="options"></div>
-  <div id="score" style="font-size: 24px;">Score: 0</div>
-  <div id="time" style="font-size: 24px;">Time Left: 60</div>
+  <div id="gameArea">
+    <h1>色水測驗</h1>
+    <button onclick="startGame()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
+    <div id="options"></div>
+    <div id="score" style="font-size: 24px;">Score: 0</div>
+    <div id="time" style="font-size: 24px;">Time Left: 60</div>
+  </div>
+
+  <div id="leaderboard">
+    <h2>前10名榜單</h2>
+    <ol id="topPlayersList"></ol>
+  </div>
 
   <!-- JavaScript 程式碼 -->
   <script>
@@ -38,6 +57,10 @@
     let timeLeft = 60;
     let timer;
     let gameActive = false;
+
+    window.onload = function() {
+      fetchLeaderboard();  // 頁面載入時獲取榜單
+    };
 
     function playRandomAudio() {
       if (!gameActive) return;
@@ -56,7 +79,15 @@
 
     function checkAnswer(isCorrect) {
       if (!gameActive) return;
-      score += isCorrect === 'true' ? 1 : -1;
+      if (isCorrect === 'true') {
+        score++;
+      } else {
+        score--;
+        document.body.classList.add('highlight');  // 加入紅色背景
+        setTimeout(() => {
+          document.body.classList.remove('highlight');
+        }, 500);
+      }
       document.getElementById('score').innerText = 'Score: ' + score;
       playRandomAudio();
     }
@@ -97,12 +128,20 @@
       .then(response => response.json())
       .then(data => {
         alert('遊戲結束！您的分數是: ' + score + '\n您的名次是: 第' + data.rank + '名');
-        let topPlayersHtml = '<h2>前10名榜單</h2><ol>';
+        fetchLeaderboard();  // 更新前10名榜單
+      })
+      .catch(error => console.error('錯誤:', error));
+    }
+
+    function fetchLeaderboard() {
+      fetch('https://script.google.com/macros/s/你的部署URL/exec')
+      .then(response => response.json())
+      .then(data => {
+        let topPlayersHtml = '';
         data.topPlayers.forEach(player => {
-          topPlayersHtml += '<li>' + player[0] + ': ' + player[1] + ' 分</li>';
+          topPlayersHtml += `<li>${player[0]}: ${player[1]} 分</li>`;
         });
-        topPlayersHtml += '</ol>';
-        document.getElementById('options').innerHTML = topPlayersHtml;
+        document.getElementById('topPlayersList').innerHTML = topPlayersHtml;
       })
       .catch(error => console.error('錯誤:', error));
     }
