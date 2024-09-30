@@ -114,5 +114,39 @@
   <div id="options"></div>
   <div id="score" style="font-size: 24px;">Score: 0</div>
   <div id="time" style="font-size: 24px;">Time Left: 60</div>
+   <!-- JavaScript 程式碼放在這裡 -->
+  <script>
+  function endGame() {
+  gameActive = false;
+  clearInterval(timer);
+
+  const playerName = prompt('請輸入您的名稱');
+  if (!playerName) return;
+
+  // 上傳分數到 Google 試算表
+  fetch('https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbyuGlJwfddVfcZ5fE-l0NW33_-aZlkuJztlkGSF6RTUGjOTjPlDPSkaPDsT_9SwIlh5vg/exec/exec', {
+    method: 'POST',
+    body: JSON.stringify({
+      player: playerName,
+      score: score
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('遊戲結束！您的分數是: ' + score + '\n您的名次是: 第' + data.rank + '名');
+    
+    // 顯示前10名榜單
+    let topPlayersHtml = '<h2>前10名榜單</h2><ol>';
+    data.topPlayers.forEach(player => {
+      topPlayersHtml += '<li>' + player[0] + ': ' + player[1] + ' 分</li>';
+    });
+    topPlayersHtml += '</ol>';
+    document.getElementById('options').innerHTML = topPlayersHtml;
+  })
+  .catch(error => {
+    console.error('錯誤:', error);
+  });
+}
+ </script>
 </body>
 </html>
