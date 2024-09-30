@@ -121,7 +121,7 @@
       if (!playerName) return;
 
       // 上傳分數到 Google 試算表
-      fetch('https://script.google.com/macros/s/AKfycbwHg7xJKTq0x34kmYhxPJaNGLxAh7flQMcDKlxY8y5EjnMYrnenBnljfPPckAOm_GkTNw/exec', {
+      fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec/exec', {
         method: 'POST',
         body: JSON.stringify({ player: playerName, score: score })
       })
@@ -134,7 +134,7 @@
     }
 
     function fetchLeaderboard() {
-      fetch('https://script.google.com/macros/s/AKfycbwHg7xJKTq0x34kmYhxPJaNGLxAh7flQMcDKlxY8y5EjnMYrnenBnljfPPckAOm_GkTNw/exec')
+      fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec/exec')
       .then(response => response.json())
       .then(data => {
         let topPlayersHtml = '';
