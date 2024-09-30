@@ -5,75 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>色水測驗</title>
   <style>
-    /* 調整按鈕的樣式 */
     button {
-      font-size: 24px;   /* 調整字體大小 */
-      padding: 20px;     /* 增加內邊距，讓按鈕變大 */
-      width: 100%;       /* 讓按鈕適應網格 */
-      height: 100px;     /* 設置按鈕的高度 */
+      font-size: 24px;
+      padding: 20px;
+      width: 100%;
+      height: 100px;
     }
-
-    /* 創建一個 2x2 的網格 */
     #options {
       display: grid;
-      grid-template-columns: 1fr 1fr; /* 兩列 */
-      grid-gap: 10px; /* 增加按鈕間的間距 */
-      width: 400px;   /* 設定網格的總寬度 */
-      margin: 20px auto; /* 將網格置中 */
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 10px;
+      width: 400px;
+      margin: 20px auto;
     }
-
-    /* 調整整體版面樣式 */
     body {
-      text-align: center; /* 讓內容置中 */
+      text-align: center;
+      display: flex;
+    }
+    #gameArea {
+      flex: 1;
+    }
+    #leaderboard {
+      width: 300px;
+      padding: 20px;
+      background-color: #f4f4f4;
+      border-left: 2px solid #ccc;
+    }
+    .highlight {
+      background-color: red;
     }
   </style>
+</head>
+<body>
+  <div id="gameArea">
+    <h1>色水測驗</h1>
+    <button onclick="startGame()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
+    <div id="options"></div>
+    <div id="score" style="font-size: 24px;">Score: 0</div>
+    <div id="time" style="font-size: 24px;">Time Left: 60</div>
+  </div>
+
+  <div id="leaderboard">
+    <h2>前10名榜單</h2>
+    <ol id="topPlayersList"></ol>
+  </div>
+
+  <!-- JavaScript 程式碼 -->
   <script>
     let audioFiles = ['咖啡色', '橙色', '灰色', '白色', '粉紅仔色', '紅色', '紫色', '膚色', '藍色', '青色', '黃色', '黑色'];
     let score = 0;
     let timeLeft = 60;
     let timer;
-    let gameActive = false; // 新增變量追踪遊戲狀態
+    let gameActive = false;
+
+    window.onload = function() {
+      fetchLeaderboard();  // 頁面載入時獲取榜單
+    };
 
     function playRandomAudio() {
-      if (!gameActive) return; // 如果遊戲結束，停止生成新選項
-
-      // 隨機選取音檔播放
+      if (!gameActive) return;
       let randomIndex = Math.floor(Math.random() * audioFiles.length);
       let audio = new Audio(audioFiles[randomIndex] + '.mp3');
       audio.play();
-       
-      // 顯示選項
       let correctAnswer = audioFiles[randomIndex];
-      let otherOptions = audioFiles.filter(item => item !== correctAnswer);
-      otherOptions = shuffleArray(otherOptions);
-      
-      // 將正確答案與其他選項合併並隨機排列
-      let allOptions = [correctAnswer, ...otherOptions.slice(0, 3)];
-      allOptions = shuffleArray(allOptions);  // 隨機化選項
-
+      let otherOptions = shuffleArray(audioFiles.filter(item => item !== correctAnswer));
+      let allOptions = shuffleArray([correctAnswer, ...otherOptions.slice(0, 3)]);
       let optionsHtml = '';
-      for (let i = 0; i < allOptions.length; i++) {
-        optionsHtml += `<button onclick="checkAnswer('${allOptions[i] === correctAnswer}')">${allOptions[i]}</button>`;
-      }
+      allOptions.forEach(option => {
+        optionsHtml += `<button onclick="checkAnswer('${option === correctAnswer}')">${option}</button>`;
+      });
       document.getElementById('options').innerHTML = optionsHtml;
     }
-     
-    function checkAnswer(isCorrect) {
-      if (!gameActive) return; // 如果遊戲結束，停止檢查答案
 
+    function checkAnswer(isCorrect) {
+      if (!gameActive) return;
       if (isCorrect === 'true') {
         score++;
       } else {
         score--;
-        document.body.style.backgroundColor = 'red';
+        document.body.classList.add('highlight');  // 加入紅色背景
         setTimeout(() => {
-          document.body.style.backgroundColor = 'white';
-        }, 1000);
+          document.body.classList.remove('highlight');
+        }, 500);
       }
       document.getElementById('score').innerText = 'Score: ' + score;
       playRandomAudio();
     }
-     
+
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -83,70 +101,50 @@
     }
 
     function startGame() {
-      gameActive = true; // 遊戲開始
-      score = 0; // 初始化分數
-      timeLeft = 60; // 初始化時間
+      gameActive = true;
+      score = 0;
+      timeLeft = 60;
       document.getElementById('score').innerText = 'Score: ' + score;
       document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
-
       timer = setInterval(() => {
         timeLeft--;
         document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
-        if (timeLeft === 0) {
-          endGame(); // 當時間結束時，停止遊戲
-        }
+        if (timeLeft === 0) endGame();
       }, 1000);
-
       playRandomAudio();
     }
 
     function endGame() {
-      gameActive = false; // 停止遊戲
-      clearInterval(timer); // 停止計時
-      alert('遊戲結束！您的分數是: ' + score);
-      document.getElementById('options').innerHTML = ''; // 清空選項
+      gameActive = false;
+      clearInterval(timer);
+      const playerName = prompt('請輸入您的名稱');
+      if (!playerName) return;
+
+      // 上傳分數到 Google 試算表
+      fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec/exec', {
+        method: 'POST',
+        body: JSON.stringify({ player: playerName, score: score })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert('遊戲結束！您的分數是: ' + score + '\n您的名次是: 第' + data.rank + '名');
+        fetchLeaderboard();  // 更新前10名榜單
+      })
+      .catch(error => console.error('錯誤:', error));
+    }
+
+    function fetchLeaderboard() {
+      fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec/exec')
+      .then(response => response.json())
+      .then(data => {
+        let topPlayersHtml = '';
+        data.topPlayers.forEach(player => {
+          topPlayersHtml += `<li>${player[0]}: ${player[1]} 分</li>`;
+        });
+        document.getElementById('topPlayersList').innerHTML = topPlayersHtml;
+      })
+      .catch(error => console.error('錯誤:', error));
     }
   </script>
-</head>
-<body>
-  <h1>色水測驗</h1>
-  <button onclick="startGame()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
-  <div id="options"></div>
-  <div id="score" style="font-size: 24px;">Score: 0</div>
-  <div id="time" style="font-size: 24px;">Time Left: 60</div>
-   <!-- JavaScript 程式碼放在這裡 -->
-  <script>
-  function endGame() {
-  gameActive = false;
-  clearInterval(timer);
-
-  const playerName = prompt('請輸入您的名稱');
-  if (!playerName) return;
-
-  // 上傳分數到 Google 試算表
-  fetch('https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbyuGlJwfddVfcZ5fE-l0NW33_-aZlkuJztlkGSF6RTUGjOTjPlDPSkaPDsT_9SwIlh5vg/exec/exec', {
-    method: 'POST',
-    body: JSON.stringify({
-      player: playerName,
-      score: score
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    alert('遊戲結束！您的分數是: ' + score + '\n您的名次是: 第' + data.rank + '名');
-    
-    // 顯示前10名榜單
-    let topPlayersHtml = '<h2>前10名榜單</h2><ol>';
-    data.topPlayers.forEach(player => {
-      topPlayersHtml += '<li>' + player[0] + ': ' + player[1] + ' 分</li>';
-    });
-    topPlayersHtml += '</ol>';
-    document.getElementById('options').innerHTML = topPlayersHtml;
-  })
-  .catch(error => {
-    console.error('錯誤:', error);
-  });
-}
- </script>
 </body>
 </html>
