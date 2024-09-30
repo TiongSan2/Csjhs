@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,12 +51,10 @@
     <label for="classSelect">班級：</label>
     <select id="classSelect">
       <option value="">請選擇班級</option>
-      <!-- 班級選項將動態生成 -->
     </select>
     <label for="studentSelect">姓名：</label>
-    <select id="studentSelect">
+    <select id="studentSelect" disabled>
       <option value="">請選擇姓名</option>
-      <!-- 學生選項將根據班級動態生成 -->
     </select>
     <button id="startButton" disabled>開始測驗</button>
   </div>
@@ -82,9 +80,10 @@
     let gameActive = false;
     let selectedClass = '';
     let selectedStudent = '';
+    let classList = {};  // 全局變量，保存班級和學生名
 
     window.onload = function() {
-      fetch('students.csv')
+      fetch('/mnt/data/students.csv')  // 正確指定 CSV 文件的路徑
         .then(response => response.text())
         .then(csvData => parseCSV(csvData));
 
@@ -112,7 +111,6 @@
 
     function parseCSV(csvData) {
       let lines = csvData.split('\n');
-      let classList = {};
       lines.forEach(line => {
         let [className, studentName] = line.split(',');
         if (!classList[className]) {
@@ -125,6 +123,7 @@
 
     function updateClassList(classes) {
       const classSelect = document.getElementById('classSelect');
+      classSelect.innerHTML = '<option value="">請選擇班級</option>';
       classes.forEach(className => {
         let option = document.createElement('option');
         option.value = className;
@@ -136,13 +135,18 @@
     function updateStudentList(className) {
       const studentSelect = document.getElementById('studentSelect');
       studentSelect.innerHTML = '<option value="">請選擇姓名</option>';
-      const students = classList[className] || [];
-      students.forEach(student => {
-        let option = document.createElement('option');
-        option.value = student;
-        option.textContent = student;
-        studentSelect.appendChild(option);
-      });
+      if (className) {
+        studentSelect.disabled = false;
+        const students = classList[className] || [];
+        students.forEach(student => {
+          let option = document.createElement('option');
+          option.value = student;
+          option.textContent = student;
+          studentSelect.appendChild(option);
+        });
+      } else {
+        studentSelect.disabled = true;
+      }
     }
 
     function startGame() {
