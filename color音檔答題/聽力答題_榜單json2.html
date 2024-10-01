@@ -161,22 +161,29 @@
       playRandomAudio();
     }
 
-    function endGame() {
-      gameActive = false;
-      clearInterval(timer);
+function endGame() {
+  gameActive = false;
+  clearInterval(timer);
 
-      // 上傳分數到 Google 試算表
-      fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec', {
-        method: 'POST',
-        body: JSON.stringify({ class: selectedClass, student: selectedStudent, score: score })
-      })
-      .then(response => response.json())
-      .then(data => {
-        alert('遊戲結束！您的分數是: ' + score + '\n您的名次是: 第' + data.rank + '名');
-        fetchLeaderboard();
-      })
-      .catch(error => console.error('錯誤:', error));
-    }
+  // 上傳分數和姓名到 Google 試算表
+  fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      class: selectedClass,
+      student: selectedStudent,  // 傳遞使用者選擇的姓名
+      score: score
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('遊戲結束！您的分數是: ' + score + '\n您的名次是: 第' + data.rank + '名');
+    fetchLeaderboard();  // 更新榜單
+  })
+  .catch(error => console.error('錯誤:', error));
+}
 
     function fetchLeaderboard() {
       fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec')
