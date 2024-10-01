@@ -166,7 +166,7 @@ function endGame() {
   clearInterval(timer);
 
   // 上傳分數和姓名到 Google 試算表
-  fetch('https://script.google.com/macros/s/AKfycbxui7TlqYfS_M8mIMyksu8Q90iNQhwVNmHXq0-M0Cq4rwenV9D5b_GmFRjy-UShiBoFrw/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbwydOWWLAjLhdOGHHblV5LRow42iIedfFOg-KzlLqMWVTU8d0iFR6nsNVyc66He4oeYeg/exec', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -186,7 +186,7 @@ function endGame() {
 }
 
     function fetchLeaderboard() {
-      fetch('https://script.google.com/macros/s/AKfycbxui7TlqYfS_M8mIMyksu8Q90iNQhwVNmHXq0-M0Cq4rwenV9D5b_GmFRjy-UShiBoFrw/exec')
+      fetch('https://script.google.com/macros/s/AKfycbwydOWWLAjLhdOGHHblV5LRow42iIedfFOg-KzlLqMWVTU8d0iFR6nsNVyc66He4oeYeg/exec')
       .then(response => response.json())
       .then(data => {
         let topPlayersHtml = '';
