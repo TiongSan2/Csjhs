@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>聽力測驗</title>
+  <style>
+    button {
+      font-size: 24px;
+      padding: 20px;
+      width: 100%;
+      height: 100px;
+    }
+    #options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 10px;
+      width: 400px;
+      margin: 20px auto;
+    }
+    body {
+      text-align: center;
+      display: flex;
+    }
+    #gameArea {
+      flex: 1;
+    }
+    #leaderboard {
+      width: 300px;
+      padding: 20px;
+      background-color: #f4f4f4;
+      border-left: 2px solid #ccc;
+    }
+    .highlight {
+      background-color: red;
+    }
+    #classStudentForm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+    }
+    #gameArea, #leaderboard {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="classStudentForm">
+    <h1>選擇班級與姓名</h1>
+    <label for="classSelect">班級：</label>
+    <select id="classSelect">
+      <option value="">請選擇班級</option>
+    </select>
+    <label for="studentSelect">姓名：</label>
+    <select id="studentSelect" disabled>
+      <option value="">請選擇姓名</option>
+    </select>
+    <button id="startButton" disabled>開始測驗</button>
+  </div>
+
+  <div id="gameArea">
+    <h1>色水測驗</h1>
+    <div id="options"></div>
+    <div id="score" style="font-size: 24px;">Score: 0</div>
+    <div id="time" style="font-size: 24px;">Time Left: 60</div>
+  </div>
+
+  <div id="leaderboard">
+    <h2>前10名榜單</h2>
+    <ol id="topPlayersList"></ol>
+  </div>
+
+  <script>
+    let audioFiles = ['咖啡色', '橙色', '灰色', '白色', '粉紅仔色', '紅色', '紫色', '膚色', '藍色', '青色', '黃色', '黑色'];
+    let score = 0;
+    let timeLeft = 60;
+    let timer;
+    let gameActive = false;
+    let selectedClass = '';
+    let selectedStudent = '';
+
+    window.onload = function() {
+      // 載入學生資料
+      fetch('students.json')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          populateClassList(data);
+          document.getElementById('classSelect').addEventListener('change', function() {
+            selectedClass = this.value;
+            updateStudentList(selectedClass, data);
+          });
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+        });
+
+      document.getElementById('studentSelect').addEventListener('change', function() {
+        selectedStudent = this.value;
+        document.getElementById('startButton').disabled = !selectedStudent;
+      });
+
+      document.getElementById('startButton').addEventListener('click', function() {
+        if (selectedClass && selectedStudent) {
+          document.getElementById('classStudentForm').style.display = 'none';
+          document.getElementById('gameArea').style.display = 'block';
+          document.getElementById('leaderboard').style.display = 'block';
+          startGame();
+        }
+      });
+
+      fetchLeaderboard();
+    };
+
+    function populateClassList(data) {
+      const classSelect = document.getElementById('classSelect');
+      // 獲取不重複的班級
+      const classes = [...new Set(data.map(student => student["班級"]))];
+      classes.forEach(classNum => {
+        let option = document.createElement('option');
+        option.value = classNum;
+        option.textContent = classNum;
+        classSelect.appendChild(option);
+      });
+    }
+
+    function updateStudentList(className, data) {
+      const studentSelect = document.getElementById('studentSelect');
+      studentSelect.innerHTML = '<option value="">請選擇姓名</option>';
+      if (className) {
+        studentSelect.disabled = false;
+        data.forEach(student => {
+          if (student["班級"] == className) {
+            let option = document.createElement('option');
+            option.value = student["姓名"];
+            option.textContent = student["姓名"];
+            studentSelect.appendChild(option);
+          }
+        });
+      } else {
+        studentSelect.disabled = true;
+      }
+    }
+
+    function startGame() {
+      gameActive = true;
+      score = 0;
+      timeLeft = 60;
+      document.getElementById('score').innerText = 'Score: ' + score;
+      document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time').innerText = 'Time Left: ' + timeLeft;
+        if (timeLeft === 0) endGame();
+      }, 1000);
+      playRandomAudio();
+    }
+
+    function endGame() {
+      gameActive = false;
+      clearInterval(timer);
+
+      // 上傳分數到 Google 試算表
+      fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec', {
+        method: 'POST',
+        body: JSON.stringify({ class: selectedClass, student: selectedStudent, score: score })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert('遊戲結束！您的分數是: ' + score + '\n您的名次是: 第' + data.rank + '名');
+        fetchLeaderboard();
+      })
+      .catch(error => console.error('錯誤:', error));
+    }
+
+    function fetchLeaderboard() {
+      fetch('https://script.google.com/macros/s/AKfycbzNH86W6EsP7MRfyZqmZ4ejKKf51Lfe_Fx020qLW__zHFxcDHThBD9h2KV_7fdGfnq7IA/exec')
+      .then(response => response.json())
+      .then(data => {
+        let topPlayersHtml = '';
+        data.topPlayers.forEach(player => {
+          topPlayersHtml += `<li>${player[0]}: ${player[1]} 分</li>`;
+        });
+        document.getElementById('topPlayersList').innerHTML = topPlayersHtml;
+      })
+      .catch(error => console.error('錯誤:', error));
+    }
+
+    function playRandomAudio() {
+      if (!gameActive) return;
+      let randomIndex = Math.floor(Math.random() * audioFiles.length);
+      let audio = new Audio(audioFiles[randomIndex] + '.mp3');
+      audio.play();
+      let correctAnswer = audioFiles[randomIndex];
+      let otherOptions = shuffleArray(audioFiles.filter(item => item !== correctAnswer));
+      let allOptions = shuffleArray([correctAnswer, ...otherOptions.slice(0, 3)]);
+      let optionsHtml = '';
+      allOptions.forEach(option => {
+        optionsHtml += `<button onclick="checkAnswer('${option === correctAnswer}')">${option}</button>`;
+      });
+      document.getElementById('options').innerHTML = optionsHtml;
+    }
+
+    function checkAnswer(isCorrect) {
+      if (!gameActive) return;
+      if (isCorrect === 'true') {
+        score++;
+      } else {
+        score--;
+        document.body.classList.add('highlight');
+        setTimeout(() => {
+          document.body.classList.remove('highlight');
+        }, 500);
+      }
+      document.getElementById('score').innerText = 'Score: ' + score;
+      playRandomAudio();
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+  </script>
+</body>
+</html>
