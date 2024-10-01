@@ -195,7 +195,9 @@ function endGame() {
         });
         document.getElementById('topPlayersList').innerHTML = topPlayersHtml;
       })
-      .catch(error => console.error('錯誤:', error));
+      .catch(error => console.error('錯誤:', error);
+      alert('上傳數據失敗，請檢查網路連線或聯絡管理員。');
+    });
     }
 
     function playRandomAudio() {
