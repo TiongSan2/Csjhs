@@ -529,9 +529,25 @@ function parseCSV(data) {
 
 
 function startQuiz(questions) {
-    console.log('Starting Quiz...');
-    // 啟動測驗，這裡可以添加您現有的邏輯來顯示問題
-    // 顯示第一個問題或啟動測驗的相關邏輯
+    document.getElementById('initialContainer').style.display = 'none';  // 隱藏初始容器
+    document.getElementById('quizContainer').style.display = 'block';   // 顯示問題容器
+    displayQuestion(questions);  // 顯示第一個問題
+}
+
+function displayQuestion(questions) {
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+
+    const currentQ = questions[currentQuestion];
+    questionElement.textContent = currentQ.question;
+    optionsElement.innerHTML = '';
+
+    currentQ.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.textContent = option;
+        button.onclick = () => selectAnswer(index);
+        optionsElement.appendChild(button);
+    });
 }
 
 function startQuizFromCSV() {
@@ -561,39 +577,7 @@ function loadCSVQuiz() {
         });
 }
 
-    function displayQuestion() {
-        const questionElement = document.getElementById('question');
-        const optionsElement = document.getElementById('options');
-        const questionCounterElement = document.getElementById('questionCounter');
 
-        const currentQ = shuffledQuestions[currentQuestion];
-        questionElement.textContent = currentQ.question;
-        optionsElement.innerHTML = '';
-
-        const usedColors = new Set();
-
-        currentQ.shuffledOptions.forEach((option, index) => {
-            const button = document.createElement('button');
-            button.textContent = option;
-            let color;
-            do {
-                color = getRandomPastelColor();
-            } while (usedColors.has(color));
-            usedColors.add(color);
-            button.style.backgroundColor = color;
-            if (userAnswers[currentQuestion] === index) {
-                button.classList.add('selected');
-            }
-            button.onclick = () => selectAnswer(button, index);
-            optionsElement.appendChild(button);
-        });
-
-        questionCounterElement.textContent = `第 ${currentQuestion + 1} 題 / 共 ${shuffledQuestions.length} 題`;
-
-        document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline-block';
-        document.getElementById('nextBtn').style.display = currentQuestion === shuffledQuestions.length - 1 ? 'none' : 'inline-block';
-        document.getElementById('finishBtn').style.display = currentQuestion === shuffledQuestions.length - 1 ? 'inline-block' : 'none';
-    }
 
     function selectAnswer(button, index) {
         const optionButtons = document.querySelectorAll('.options button');
