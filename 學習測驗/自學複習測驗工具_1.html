@@ -501,23 +501,26 @@ function parseCSV(data) {
     for (let line of lines) {
         const [question, correctIndex, ...options] = line.split(',');
         
-        // 確保 correctIndex 被解析為數字，並移除空格
+        // 檢查 correctIndex 是否為數字
         if (question && options.length === 4) {
-            const correctAnswerIndex = parseInt(correctIndex.trim(), 10);  // 移除空格並解析為數字
-            if (!isNaN(correctAnswerIndex)) {
+            const correctAnswerIndex = parseInt(correctIndex.trim(), 10);
+            if (!isNaN(correctAnswerIndex) && correctAnswerIndex >= 1 && correctAnswerIndex <= 4) {
                 result.push({
                     question: question.trim(),
-                    options: options.map(option => option.trim()),  // 移除選項的空格
-                    correct: correctAnswerIndex - 1  // 正確答案為 0 基數
+                    options: options.map(option => option.trim()),
+                    correct: correctAnswerIndex - 1  // 將 1 基數轉換為 0 基數
                 });
             } else {
                 console.warn('Invalid correct answer index:', correctIndex);
             }
+        } else {
+            console.warn('Invalid line format:', line);
         }
     }
 
     return result;
 }
+
 
 function startQuiz(questions) {
     console.log('Starting Quiz...');
