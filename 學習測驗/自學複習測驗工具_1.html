@@ -498,7 +498,13 @@ function parseCSV(data) {
     const lines = data.split('\n');
     let result = [];
 
-    for (let line of lines) {
+    lines.forEach((line, index) => {
+        // 忽略空行或標題列
+        if (index === 0 || line.trim() === '') {
+            console.warn('Skipping invalid line:', line);
+            return;
+        }
+
         const [question, correctIndex, ...options] = line.split(',');
         
         // 檢查 correctIndex 是否為數字
@@ -508,7 +514,7 @@ function parseCSV(data) {
                 result.push({
                     question: question.trim(),
                     options: options.map(option => option.trim()),
-                    correct: correctAnswerIndex - 1  // 將 1 基數轉換為 0 基數
+                    correct: correctAnswerIndex - 1  // 轉換為 0 基數
                 });
             } else {
                 console.warn('Invalid correct answer index:', correctIndex);
@@ -516,7 +522,7 @@ function parseCSV(data) {
         } else {
             console.warn('Invalid line format:', line);
         }
-    }
+    });
 
     return result;
 }
