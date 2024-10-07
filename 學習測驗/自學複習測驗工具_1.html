@@ -507,7 +507,7 @@ function parseCSV(data) {
 
         const [question, correctIndex, ...options] = line.split(',');
         
-        // 檢查 correctIndex 是否為數字
+        // 檢查每一行是否有效
         if (question && options.length === 4) {
             const correctAnswerIndex = parseInt(correctIndex.trim(), 10);
             if (!isNaN(correctAnswerIndex) && correctAnswerIndex >= 1 && correctAnswerIndex <= 4) {
@@ -528,9 +528,12 @@ function parseCSV(data) {
 }
 
 
+
 function startQuiz(questions) {
-    document.getElementById('initialContainer').style.display = 'none';  // 隱藏初始容器
-    document.getElementById('quizContainer').style.display = 'block';   // 顯示問題容器
+    console.log('Starting Quiz with Questions:', questions);
+    currentQuestion = 0;  // 初始化當前問題的索引
+    score = 0;  // 初始化分數
+    userAnswers.length = 0;  // 清空用戶答案
     displayQuestion(questions);  // 顯示第一個問題
 }
 
@@ -538,17 +541,24 @@ function displayQuestion(questions) {
     const questionElement = document.getElementById('question');
     const optionsElement = document.getElementById('options');
 
-    const currentQ = questions[currentQuestion];
-    questionElement.textContent = currentQ.question;
-    optionsElement.innerHTML = '';
+    if (currentQuestion < questions.length) {
+        const currentQ = questions[currentQuestion];
+        questionElement.textContent = currentQ.question;
+        optionsElement.innerHTML = '';
 
-    currentQ.options.forEach((option, index) => {
-        const button = document.createElement('button');
-        button.textContent = option;
-        button.onclick = () => selectAnswer(index);
-        optionsElement.appendChild(button);
-    });
+        currentQ.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.textContent = option;
+            button.onclick = () => selectAnswer(index);  // 設置選擇答案的功能
+            optionsElement.appendChild(button);
+        });
+    } else {
+        // 顯示測驗結束或結果
+        console.log('No more questions.');
+        finishQuiz();
+    }
 }
+
 
 function startQuizFromCSV() {
     loadCSVQuiz();  // 從 CSV 啟動測驗
