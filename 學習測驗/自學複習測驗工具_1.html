@@ -470,36 +470,58 @@
     document.getElementById('finishBtn').style.display = 'none';
 
 function loadCSVQuiz() {
-    fetch('學習測驗.csv')
-        .then(response => response.text())
+    console.log('Loading CSV...');
+    fetch('學習測驗.csv')  // 確保 CSV 文件路徑正確
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('CSV file not found or cannot be loaded');
+            }
+            return response.text();
+        })
         .then(data => {
-            const questions = parseCSV(data);  // Parse the CSV data
-            displayQuiz(questions);            // Display quiz
+            console.log('CSV loaded successfully');
+            const questions = parseCSV(data);  // 解析 CSV 資料
+            console.log('Parsed Questions:', questions);  // 顯示解析後的問題資料
+            if (questions.length > 0) {
+                startQuiz(questions);  // 啟動測驗
+            } else {
+                alert('沒有解析到任何問題');
+            }
         })
         .catch(error => {
-            console.log('Error loading CSV file:', error);
+            console.error('Error loading CSV file:', error);
         });
 }
+
 function parseCSV(data) {
+    console.log('Parsing CSV data...');
     const lines = data.split('\n');
     let result = [];
-    
+
     for (let line of lines) {
         const [question, correctIndex, ...options] = line.split(',');
-        result.push({
-            question: question,
-            options: options,
-            correct: parseInt(correctIndex) - 1  // Correct answer index (0-based)
-        });
+        if (question && options.length === 4) {  // 確保每行有問題和 4 個選項
+            result.push({
+                question: question,
+                options: options,
+                correct: parseInt(correctIndex) - 1  // 將正確答案索引轉為 0 基數
+            });
+        }
     }
-    
+
     return result;
 }
 
-
-    function startQuizFromCSV() {
-    loadCSVQuiz();  // Load and start the quiz
+function startQuiz(questions) {
+    console.log('Starting Quiz...');
+    // 啟動測驗，這裡可以添加您現有的邏輯來顯示問題
+    // 顯示第一個問題或啟動測驗的相關邏輯
 }
+
+function startQuizFromCSV() {
+    loadCSVQuiz();  // 從 CSV 啟動測驗
+}
+
 
 
     function displayQuestion() {
@@ -763,6 +785,7 @@ function parseCSV(data) {
                 }
             });
     });
+    
 </script>
 
 
