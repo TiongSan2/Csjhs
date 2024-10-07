@@ -500,12 +500,19 @@ function parseCSV(data) {
 
     for (let line of lines) {
         const [question, correctIndex, ...options] = line.split(',');
-        if (question && options.length === 4) {  // 確保每行有問題和 4 個選項
-            result.push({
-                question: question,
-                options: options,
-                correct: parseInt(correctIndex) - 1  // 將正確答案索引轉為 0 基數
-            });
+        
+        // 確保 correctIndex 被解析為數字，並移除空格
+        if (question && options.length === 4) {
+            const correctAnswerIndex = parseInt(correctIndex.trim(), 10);  // 移除空格並解析為數字
+            if (!isNaN(correctAnswerIndex)) {
+                result.push({
+                    question: question.trim(),
+                    options: options.map(option => option.trim()),  // 移除選項的空格
+                    correct: correctAnswerIndex - 1  // 正確答案為 0 基數
+                });
+            } else {
+                console.warn('Invalid correct answer index:', correctIndex);
+            }
         }
     }
 
@@ -754,7 +761,7 @@ function loadCSVQuiz() {
         fetch('選擇題題庫.txt')
             .then(response => response.text())
             .then(data => {
-                const input = document.getElementById('generatorInput');
+  
                 input.value = data; // 將讀取到的內容載入到 <textarea> 中
                 submitGenerator();  // 自動按下送出
             })
