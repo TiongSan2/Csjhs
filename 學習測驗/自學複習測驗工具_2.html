@@ -547,7 +547,8 @@ function parseCSV(data) {
     return result;
 }
 
-
+let currentQuestion = 0; // 使用 let 來允許重新賦值
+let userAnswers = [];    // 使用 let 來存儲用戶的答案
 
 function startQuiz(questions) {
     currentQuestion = 0; // 重置問題索引
