@@ -431,7 +431,7 @@
     <button class="clear-btn" onclick="clearRecords()">清除紀錄</button>
 </div>
 
-<div class="quiz-container" id="quizContainer">
+<div class="quiz-container" id="quizContainer" style="display: none;">
     <table>
         <tbody><tr>
             <td>
@@ -530,35 +530,33 @@ function parseCSV(data) {
 
 
 function startQuiz(questions) {
-    console.log('Starting Quiz with Questions:', questions);
-    currentQuestion = 0;  // 初始化當前問題的索引
-    score = 0;  // 初始化分數
-    userAnswers.length = 0;  // 清空用戶答案
-    displayQuestion(questions);  // 顯示第一個問題
+    document.getElementById('initialContainer').style.display = 'none';  // 隱藏初始容器
+    document.getElementById('quizContainer').style.display = 'block';    // 顯示測驗容器
+    displayQuestion(questions); // 顯示第一道問題
 }
 
 function displayQuestion(questions) {
     const questionElement = document.getElementById('question');
     const optionsElement = document.getElementById('options');
 
+    // 確保當前問題的索引在問題範圍內
     if (currentQuestion < questions.length) {
         const currentQ = questions[currentQuestion];
         questionElement.textContent = currentQ.question;
-        optionsElement.innerHTML = '';
+        optionsElement.innerHTML = ''; // 清空之前的選項
 
+        // 顯示選項
         currentQ.options.forEach((option, index) => {
             const button = document.createElement('button');
             button.textContent = option;
-            button.onclick = () => selectAnswer(index);  // 設置選擇答案的功能
+            button.onclick = () => selectAnswer(index); // 當選擇答案時調用
             optionsElement.appendChild(button);
         });
     } else {
-        // 顯示測驗結束或結果
         console.log('No more questions.');
-        finishQuiz();
+        finishQuiz(); // 當沒有更多問題時調用結束測驗的函數
     }
 }
-
 
 function startQuizFromCSV() {
     loadCSVQuiz();  // 從 CSV 啟動測驗
@@ -589,13 +587,12 @@ function loadCSVQuiz() {
 
 
 
-    function selectAnswer(button, index) {
-        const optionButtons = document.querySelectorAll('.options button');
-        optionButtons.forEach(btn => btn.classList.remove('selected'));
-        button.classList.add('selected');
-        userAnswers[currentQuestion] = index;
-    }
-
+function selectAnswer(selectedIndex) {
+    userAnswers[currentQuestion] = selectedIndex; // 保存用戶的答案
+    console.log(`User selected answer ${selectedIndex} for question ${currentQuestion}`);
+    currentQuestion++; // 移至下一題
+    displayQuestion(questions); // 顯示下一題
+}
     function nextQuestion() {
         if (userAnswers[currentQuestion] === undefined) {
             alert('請選擇一個答案');
@@ -610,15 +607,12 @@ function loadCSVQuiz() {
         displayQuestion();
     }
 
-    function finishQuiz() {
-        if (userAnswers[currentQuestion] === undefined) {
-            alert('請選擇一個答案');
-            return;
-        }
-        calculateScore();
-        displayResults();
-        saveRecord();
-    }
+function finishQuiz() {
+    // 計算分數和顯示結果的邏輯
+    console.log('Finishing Quiz...');
+    // 進行結果計算和顯示
+}
+
 
     function calculateScore() {
         score = userAnswers.reduce((total, answer, index) => {
