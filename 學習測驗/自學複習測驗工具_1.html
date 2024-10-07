@@ -539,7 +539,6 @@ function displayQuestion(questions) {
     const questionElement = document.getElementById('question');
     const optionsElement = document.getElementById('options');
 
-    // 確保當前問題的索引在問題範圍內
     if (currentQuestion < questions.length) {
         const currentQ = questions[currentQuestion];
         questionElement.textContent = currentQ.question;
@@ -553,7 +552,6 @@ function displayQuestion(questions) {
             optionsElement.appendChild(button);
         });
     } else {
-        console.log('No more questions.');
         finishQuiz(); // 當沒有更多問題時調用結束測驗的函數
     }
 }
@@ -591,14 +589,17 @@ function loadCSVQuiz() {
 function selectAnswer(selectedIndex) {
     userAnswers[currentQuestion] = selectedIndex; // 保存用戶的答案
     console.log(`User selected answer ${selectedIndex} for question ${currentQuestion}`);
-    
+
     currentQuestion++; // 移至下一題
+
+    // 檢查是否還有更多問題
     if (currentQuestion < questions.length) {
         displayQuestion(questions); // 顯示下一題
     } else {
         finishQuiz(); // 沒有更多問題時結束測驗
     }
 }
+
 
     function nextQuestion() {
         if (userAnswers[currentQuestion] === undefined) {
