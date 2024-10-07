@@ -558,6 +558,7 @@ function displayQuestion(questions) {
     }
 }
 
+
 function startQuizFromCSV() {
     loadCSVQuiz();  // 從 CSV 啟動測驗
 }
@@ -590,9 +591,15 @@ function loadCSVQuiz() {
 function selectAnswer(selectedIndex) {
     userAnswers[currentQuestion] = selectedIndex; // 保存用戶的答案
     console.log(`User selected answer ${selectedIndex} for question ${currentQuestion}`);
+    
     currentQuestion++; // 移至下一題
-    displayQuestion(questions); // 顯示下一題
+    if (currentQuestion < questions.length) {
+        displayQuestion(questions); // 顯示下一題
+    } else {
+        finishQuiz(); // 沒有更多問題時結束測驗
+    }
 }
+
     function nextQuestion() {
         if (userAnswers[currentQuestion] === undefined) {
             alert('請選擇一個答案');
@@ -607,11 +614,7 @@ function selectAnswer(selectedIndex) {
         displayQuestion();
     }
 
-function finishQuiz() {
-    // 計算分數和顯示結果的邏輯
-    console.log('Finishing Quiz...');
-    // 進行結果計算和顯示
-}
+
 
 
     function calculateScore() {
@@ -777,15 +780,15 @@ function finishQuiz() {
         renderRecordTable();
     });
 
-    
-    
     window.addEventListener('load', () => {
         // 檢查是否有 list.csv 檔案
-
-
-
             });
-
+    
+function finishQuiz() {
+    // 計算分數和顯示結果的邏輯
+    console.log('Finishing Quiz...');
+    // 進行結果計算和顯示
+}
     
 </script>
 
