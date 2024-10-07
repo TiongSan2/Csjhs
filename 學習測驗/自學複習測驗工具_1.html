@@ -746,10 +746,7 @@ function startQuizFromCSV() {
        
         let initialLoad = true;
 
-        inputElement.addEventListener('input', function() {
-            initialLoad = false;
-        });
-
+      
         if (inputElement.value.trim()) {
             submitGenerator();
             if (initialLoad) {
@@ -764,25 +761,9 @@ function startQuizFromCSV() {
     
     window.addEventListener('load', () => {
         // 檢查是否有 list.csv 檔案
-        fetch('list.csv')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('No list.csv file found');
-                }
-                return response.text();
-            })
-            .then(data => {
-                // 將 list.csv 的內容載入到 <textarea> 內
-                const input = document.getElementById('generatorInput');
-                input.value = data; // 取代原本 <textarea> 內的內容
-                submitCustomWord(); // 自動提交資料並更新頁面
-            })
-            .catch(error => {
-                console.log('Could not load list.csv:', error);
-                // 如果沒有找到檔案，保持原狀
-                if (inputTextarea.value.trim() !== "") {
-                    submitCustomWord();
-                }
+
+
+
             });
     });
     
