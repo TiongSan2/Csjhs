@@ -522,7 +522,28 @@ function startQuizFromCSV() {
     loadCSVQuiz();  // 從 CSV 啟動測驗
 }
 
-
+function loadCSVQuiz() {
+    console.log('Loading CSV...');
+    fetch('學習測驗.csv')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('CSV file not found or cannot be loaded');
+            }
+            return response.text();
+        })
+        .then(data => {
+            const questions = parseCSV(data);
+            console.log('Parsed Questions:', questions);
+            if (questions.length > 0) {
+                startQuiz(questions);
+            } else {
+                alert('沒有解析到任何問題');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading CSV file:', error);
+        });
+}
 
     function displayQuestion() {
         const questionElement = document.getElementById('question');
@@ -765,7 +786,7 @@ function startQuizFromCSV() {
 
 
             });
-    });
+
     
 </script>
 
