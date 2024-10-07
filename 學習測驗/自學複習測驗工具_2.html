@@ -469,6 +469,25 @@
 
     document.getElementById('finishBtn').style.display = 'none';
 
+    function loadJSONQuiz() {
+    fetch('questions.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('JSON file not found or cannot be loaded');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const questions = data.questions; // 取出問題陣列
+            console.log('Parsed Questions:', questions);
+            startQuiz(questions); // 啟動測驗
+        })
+        .catch(error => {
+            console.error('Error loading JSON file:', error);
+        });
+}
+
+    
 function loadCSVQuiz() {
     console.log('Loading CSV...');
     fetch('學習測驗.csv')  // 確保 CSV 文件路徑正確
@@ -593,14 +612,13 @@ function selectAnswer(selectedIndex) {
     console.log(`User selected answer ${selectedIndex} for question ${currentQuestion}`);
 
     currentQuestion++; // 移至下一題
-
-    // 檢查是否還有更多問題
     if (currentQuestion < questions.length) {
         displayQuestion(questions); // 顯示下一題
     } else {
-        finishQuiz(); // 沒有更多問題時結束測驗
+        finishQuiz(); // 結束測驗
     }
 }
+
 
 
     function nextQuestion() {
