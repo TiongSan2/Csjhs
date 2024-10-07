@@ -539,6 +539,7 @@ function displayQuestion(questions) {
     const questionElement = document.getElementById('question');
     const optionsElement = document.getElementById('options');
 
+    // 確保當前問題的索引在問題範圍內
     if (currentQuestion < questions.length) {
         const currentQ = questions[currentQuestion];
         questionElement.textContent = currentQ.question;
@@ -555,6 +556,7 @@ function displayQuestion(questions) {
         finishQuiz(); // 當沒有更多問題時調用結束測驗的函數
     }
 }
+
 
 
 function startQuizFromCSV() {
@@ -786,10 +788,15 @@ function selectAnswer(selectedIndex) {
             });
     
 function finishQuiz() {
-    // 計算分數和顯示結果的邏輯
     console.log('Finishing Quiz...');
-    // 進行結果計算和顯示
+    // 進行結果計算和顯示最終分數
+    const totalScore = userAnswers.reduce((score, answer, index) => {
+        return score + (answer === questions[index].correct ? 1 : 0);
+    }, 0);
+    alert(`您的分數是: ${totalScore} / ${questions.length}`);
+    // 這裡可以添加任何其他結束邏輯，如重置測驗或顯示結果畫面
 }
+
     
 </script>
 
