@@ -461,7 +461,7 @@
 
 <script>
     let questions = [];
-    let currentQuestion = 0;
+   currentQuestion = 0; // 移除 let，直接使用變數
     let score = 0;
     const userAnswers = [];
     let shuffledQuestions = [];
@@ -547,7 +547,8 @@ function parseCSV(data) {
     return result;
 }
 
-let currentQuestion = 0; // 使用 let 來允許重新賦值
+currentQuestion = 0; // 移除 let，直接使用變數
+
 let userAnswers = [];    // 使用 let 來存儲用戶的答案
 
 function startQuiz(questions) {
