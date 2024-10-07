@@ -414,7 +414,7 @@
 
 <div class="initial-container active" id="initialContainer">
     <h1 onclick="loadQuestionsFromFile()">自學複習測驗工具</h1>
-<button onclick="startQuizFromCSV()">開始測驗</button>
+<button onclick="startQuizFromJSON()">開始測驗</button>
     <div style="max-height: 300px; overflow-y: auto;">
         <table id="recordTable">
             <thead>
@@ -469,23 +469,24 @@
 
     document.getElementById('finishBtn').style.display = 'none';
 
-    function loadJSONQuiz() {
-    fetch('questions.json')
+function loadJSONQuiz() {
+    fetch('學習測驗.json')
         .then(response => {
             if (!response.ok) {
                 throw new Error('JSON file not found or cannot be loaded');
             }
-            return response.json();
+            return response.json();  // 解析 JSON
         })
         .then(data => {
-            const questions = data.questions; // 取出問題陣列
+            const questions = data.questions;  // 獲取問題陣列
             console.log('Parsed Questions:', questions);
-            startQuiz(questions); // 啟動測驗
+            startQuiz(questions);  // 啟動測驗
         })
         .catch(error => {
             console.error('Error loading JSON file:', error);
         });
 }
+
 
     
 function loadCSVQuiz() {
@@ -549,8 +550,8 @@ function parseCSV(data) {
 
 
 function startQuiz(questions) {
-    document.getElementById('initialContainer').style.display = 'none';  // 隱藏初始容器
-    document.getElementById('quizContainer').style.display = 'block';    // 顯示測驗容器
+    currentQuestion = 0; // 重置問題索引
+    userAnswers = []; // 清空用戶答案
     displayQuestion(questions); // 顯示第一道問題
 }
 
@@ -558,13 +559,11 @@ function displayQuestion(questions) {
     const questionElement = document.getElementById('question');
     const optionsElement = document.getElementById('options');
 
-    // 確保當前問題的索引在問題範圍內
     if (currentQuestion < questions.length) {
         const currentQ = questions[currentQuestion];
         questionElement.textContent = currentQ.question;
         optionsElement.innerHTML = ''; // 清空之前的選項
 
-        // 顯示選項
         currentQ.options.forEach((option, index) => {
             const button = document.createElement('button');
             button.textContent = option;
@@ -578,9 +577,10 @@ function displayQuestion(questions) {
 
 
 
-function startQuizFromCSV() {
-    loadCSVQuiz();  // 從 CSV 啟動測驗
+function startQuizFromJSON() {
+    loadJSONQuiz();  // 加載 JSON 問題
 }
+
 
 function loadCSVQuiz() {
     console.log('Loading CSV...');
@@ -807,13 +807,15 @@ function selectAnswer(selectedIndex) {
     
 function finishQuiz() {
     console.log('Finishing Quiz...');
-    // 進行結果計算和顯示最終分數
+    // 計算分數
     const totalScore = userAnswers.reduce((score, answer, index) => {
         return score + (answer === questions[index].correct ? 1 : 0);
     }, 0);
+    
     alert(`您的分數是: ${totalScore} / ${questions.length}`);
-    // 這裡可以添加任何其他結束邏輯，如重置測驗或顯示結果畫面
 }
+
+
 
     
 </script>
