@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>舒尔特方格拼音測驗</title>
+  <title>舒爾特方格拼音測驗</title>
   <style>
     button {
       font-size: 24px;
@@ -47,13 +47,16 @@
     }
 
     function playRandomAudio() {
-      if (!gameActive) return;
+      if (!gameActive || selectedFiles.length === 0) return; // 游戏结束或没有音频文件时停止
 
       // 随机选择音频
       let randomIndex = Math.floor(Math.random() * selectedFiles.length);
       correctAnswer = selectedFiles[randomIndex];
       let audio = new Audio(correctAnswer + '.mp3');
       audio.play();
+
+      // 播放后将该音频从列表中移除，确保不重复
+      selectedFiles.splice(randomIndex, 1);
     }
 
     function checkAnswer(selectedOption) {
@@ -130,7 +133,9 @@
   </script>
 </head>
 <body>
-  <h1>舒尔特方格拼音測驗</h1>
+  <h1>舒爾特方格拼音測驗</h1>
+  <br>
+  <h3>網頁編寫:陳文賓老師</h3>
   <button onclick="chooseGridSize()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
   <div id="options"></div>
   <div id="score" style="font-size: 24px;">分數: 0</div>
