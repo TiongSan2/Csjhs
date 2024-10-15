@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>拼音測驗</title>
+  <title>舒尔特方格拼音測驗</title>
   <style>
     button {
       font-size: 24px;
@@ -14,10 +14,9 @@
 
     #options {
       display: grid;
-      grid-template-columns: 1fr 1fr;
       grid-gap: 10px;
-      width: 400px;
       margin: 20px auto;
+      width: 400px;
     }
 
     body {
@@ -33,36 +32,34 @@
   </style>
   <script>
     let audioFiles = ['a', 'b', 'e', 'g', 'h', 'i', 'j', 'k', 'kh', 'l', 'm', 'n', 'ng', 'o', 'oo', 'p', 'ph', 's', 't', 'th', 'ts', 'tsh', 'u'];
+    let selectedFiles = [];
+    let gridSize = 4;  // 默认为4x4
     let score = 0;
     let timeLeft = 60;
     let timer;
     let gameActive = false;
+    let correctAnswer = '';
+
+    function chooseGridSize() {
+      const gridChoice = prompt("请选择方格大小: 输入 '4' 表示4x4，输入 '5' 表示5x5", "4");
+      gridSize = gridChoice === '5' ? 5 : 4;
+      startGame();
+    }
 
     function playRandomAudio() {
       if (!gameActive) return;
 
-      let randomIndex = Math.floor(Math.random() * audioFiles.length);
-      let audio = new Audio(audioFiles[randomIndex] + '.mp3');
+      // 随机选择音频
+      let randomIndex = Math.floor(Math.random() * selectedFiles.length);
+      correctAnswer = selectedFiles[randomIndex];
+      let audio = new Audio(correctAnswer + '.mp3');
       audio.play();
-      
-      let correctAnswer = audioFiles[randomIndex];
-      let otherOptions = audioFiles.filter(item => item !== correctAnswer);
-      otherOptions = shuffleArray(otherOptions);
-
-      let allOptions = [correctAnswer, ...otherOptions.slice(0, 3)];
-      allOptions = shuffleArray(allOptions);
-
-      let optionsHtml = '';
-      for (let i = 0; i < allOptions.length; i++) {
-        optionsHtml += `<button onclick="checkAnswer('${allOptions[i] === correctAnswer}')">${allOptions[i]}</button>`;
-      }
-      document.getElementById('options').innerHTML = optionsHtml;
     }
-    
-    function checkAnswer(isCorrect) {
+
+    function checkAnswer(selectedOption) {
       if (!gameActive) return;
 
-      if (isCorrect === 'true') {
+      if (selectedOption === correctAnswer) {
         score++;
       } else {
         score--;
@@ -72,15 +69,7 @@
         }, 1000);
       }
       document.getElementById('score').innerText = '分數: ' + score;
-      playRandomAudio();
-    }
-
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
+      playRandomAudio(); // 播放下一個音頻
     }
 
     function startGame() {
@@ -91,6 +80,24 @@
       document.getElementById('time').innerText = '剩餘時間: ' + timeLeft;
       document.getElementById('restartButton').style.display = 'none';
 
+      // 随机选取音频文件
+      selectedFiles = shuffleArray(audioFiles).slice(0, gridSize === 4 ? 16 : 23);
+
+      // 初始化固定方格布局
+      let gridTotal = gridSize * gridSize;
+      let optionsHtml = '';
+      for (let i = 0; i < gridTotal; i++) {
+        if (selectedFiles[i]) {
+          optionsHtml += `<button onclick="checkAnswer('${selectedFiles[i]}')">${selectedFiles[i]}</button>`;
+        } else {
+          optionsHtml += `<button disabled></button>`; // 空格子
+        }
+      }
+
+      document.getElementById('options').style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+      document.getElementById('options').innerHTML = optionsHtml;
+
+      // 启动计时器
       timer = setInterval(() => {
         timeLeft--;
         document.getElementById('time').innerText = '剩餘時間: ' + timeLeft;
@@ -99,7 +106,15 @@
         }
       }, 1000);
 
-      playRandomAudio();
+      playRandomAudio(); // 开始游戏时播放第一个音频
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
     }
 
     function endGame() {
@@ -110,15 +125,13 @@
     }
 
     function restartGame() {
-      startGame();
+      chooseGridSize();
     }
   </script>
 </head>
 <body>
-  <h1>拼音測驗</h1>
-  <br>
-  <h2>網頁編寫:陳文賓老師</h2>
-  <button onclick="startGame()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
+  <h1>舒尔特方格拼音測驗</h1>
+  <button onclick="chooseGridSize()" style="font-size: 24px; padding: 15px; margin: 20px;">開始遊戲</button><br><br>
   <div id="options"></div>
   <div id="score" style="font-size: 24px;">分數: 0</div>
   <div id="time" style="font-size: 24px;">剩餘時間: 60</div>
